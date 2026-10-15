@@ -1,0 +1,12 @@
+// Cloudflare Workers: sitio 100% estático. `pnpm build` genera dist/ y
+// `wrangler deploy` solo sube esos archivos (sin adaptador ni servidor).
+{
+  "name": "snowkata",
+  "compatibility_date": "2026-10-01",
+  "build": {
+    "command": "pnpm build"
+  },
+  "assets": {
+    "directory": "./dist"
+  }
+}
