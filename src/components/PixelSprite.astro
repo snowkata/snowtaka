@@ -1,0 +1,26 @@
+---
+import { spriteRects, spriteSize, type Sprite } from '../lib/pixel'
+
+interface Props {
+  rows: Sprite
+  /** Tamaño de cada pixel en px (el sprite siempre escala en enteros para verse nítido). */
+  px?: number
+  label?: string
+  class?: string
+}
+
+const { rows, px = 4, label, class: className } = Astro.props
+const { width, height } = spriteSize(rows)
+---
+
+<svg
+  class:list={['sprite', className]}
+  viewBox={`0 0 ${width} ${height}`}
+  width={width * px}
+  height={height * px}
+  shape-rendering="crispEdges"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  set:html={spriteRects(rows)}
+/>

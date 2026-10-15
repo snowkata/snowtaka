@@ -1,0 +1,175 @@
+/* Galmuri14 (fuente bitmap con hangul) se declara en Layout.astro */
+:root {
+  --p: 4px;
+
+  --night-0: #0b0720;
+  --night-1: #120b30;
+  --night-2: #1a1042;
+  --night-3: #241656;
+  --night-4: #2f1d6b;
+  --night-5: #3c2580;
+
+  --panel: #1b1240;
+  --bar: #2c1e63;
+  --bar-2: #34246f;
+  --line: #e8e2ff;
+  --drop: rgb(5 2 15 / 0.55);
+  --ink: #170d24;
+
+  --text: #f4f0ff;
+  --muted: #b9addf;
+  --pink: #ff7aa8;
+  --lilac: #c9a8ff;
+  --purple: #b57bff;
+  --yellow: #ffe066;
+  --mint: #7dffb2;
+  --cyan: #7ef0ff;
+
+  --font-title: 'Press Start 2P', 'Galmuri14', monospace;
+  --font-body: 'Galmuri14', 'Press Start 2P', monospace;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--night-0);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px; /* tamaño nativo de Galmuri14: pixeles nítidos */
+  line-height: 1.8;
+  cursor: url('/cursor.svg') 0 0, auto;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  overflow-x: hidden;
+}
+
+a,
+button,
+[role='button'] {
+  cursor: url('/cursor-heart.svg') 10 10, pointer;
+}
+
+/* Scanlines tipo CRT */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: repeating-linear-gradient(180deg, rgb(0 0 0 / 0.08) 0 2px, transparent 2px 4px);
+}
+
+img,
+svg,
+canvas {
+  max-width: 100%;
+}
+
+a {
+  color: var(--cyan);
+}
+
+:focus-visible {
+  outline: 4px dashed var(--yellow);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--pink);
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Botón pixel reutilizable */
+.px-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border: 0;
+  font-family: var(--font-title);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--yellow);
+  box-shadow:
+    0 -4px 0 0 var(--ink),
+    0 4px 0 0 var(--ink),
+    -4px 0 0 0 var(--ink),
+    4px 0 0 0 var(--ink),
+    inset -4px -4px 0 0 rgb(0 0 0 / 0.2),
+    inset 4px 4px 0 0 rgb(255 255 255 / 0.5);
+  transition: transform 0.1s steps(1);
+}
+
+.px-btn:hover {
+  transform: translate(0, -2px);
+}
+
+.px-btn:active {
+  transform: translate(0, 2px);
+  box-shadow:
+    0 -4px 0 0 var(--ink),
+    0 4px 0 0 var(--ink),
+    -4px 0 0 0 var(--ink),
+    4px 0 0 0 var(--ink),
+    inset 4px 4px 0 0 rgb(0 0 0 / 0.2);
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes blink-text {
+  0%,
+  49.9% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,265 @@
+---
+import PixelSprite from './PixelSprite.astro'
+import { blinkOverlay, happyOverlay, heart, portrait, sparkle } from '../data/sprites'
+import { phrases } from '../data/karina'
+---
+
+<div class="portrait" data-portrait data-phrases={JSON.stringify(phrases)}>
+  <p class="bubble" data-bubble aria-live="polite">{phrases[0]}</p>
+  <button class="portrait__btn" type="button" aria-label="Saludar a Karina">
+    <span class="portrait__stage">
+      <span class="portrait__glow" aria-hidden="true"></span>
+      <span class="portrait__sparkle portrait__sparkle--a" aria-hidden="true">
+        <PixelSprite rows={sparkle} px={3} />
+      </span>
+      <span class="portrait__sparkle portrait__sparkle--b" aria-hidden="true">
+        <PixelSprite rows={sparkle} px={2} />
+      </span>
+      <span class="portrait__char">
+        <PixelSprite rows={portrait} px={9} label="Karina en pixel art" class="portrait__base" />
+        <PixelSprite rows={blinkOverlay} px={9} class="portrait__blink" />
+        <PixelSprite rows={happyOverlay} px={9} class="portrait__happy" />
+      </span>
+    </span>
+  </button>
+  <template data-heart><PixelSprite rows={heart} px={4} /></template>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-portrait]').forEach((root) => {
+    const btn = root.querySelector<HTMLButtonElement>('.portrait__btn')!
+    const bubble = root.querySelector<HTMLElement>('[data-bubble]')!
+    const tpl = root.querySelector<HTMLTemplateElement>('[data-heart]')!
+    const phrases: string[] = JSON.parse(root.dataset.phrases ?? '[]')
+    let index = 0
+    let timer = 0
+
+    btn.addEventListener('click', () => {
+      index = (index + 1) % phrases.length
+      bubble.textContent = phrases[index]
+      bubble.classList.remove('pop')
+      void bubble.offsetWidth // reinicia la animación
+      bubble.classList.add('pop')
+
+      root.classList.add('is-happy')
+      clearTimeout(timer)
+      timer = window.setTimeout(() => root.classList.remove('is-happy'), 1400)
+
+      for (let i = 0; i < 6; i++) {
+        const h = document.createElement('span')
+        h.className = 'burst'
+        h.append(tpl.content.cloneNode(true))
+        h.style.setProperty('--dx', `${Math.round((Math.random() - 0.5) * 220)}px`)
+        h.style.setProperty('--dy', `${Math.round(-120 - Math.random() * 120)}px`)
+        h.style.animationDelay = `${i * 50}ms`
+        h.addEventListener('animationend', () => h.remove())
+        root.append(h)
+      }
+    })
+  })
+</script>
+
+<style>
+  .portrait {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+  }
+
+  .portrait__btn {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: inherit;
+  }
+
+  .portrait__btn:focus-visible {
+    outline: 4px dashed var(--yellow);
+    outline-offset: 6px;
+  }
+
+  .portrait__stage {
+    position: relative;
+    display: block;
+    padding: 18px 18px 0;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 16px, rgb(255 255 255 / 0.04) 16px 32px),
+      linear-gradient(
+        180deg,
+        #3a2a7a 0 25%,
+        #4b3591 25% 50%,
+        #5e40a8 50% 75%,
+        #7350bf 75% 100%
+      );
+    box-shadow:
+      0 -4px 0 0 var(--line),
+      0 4px 0 0 var(--line),
+      -4px 0 0 0 var(--line),
+      4px 0 0 0 var(--line),
+      12px 12px 0 0 var(--drop);
+  }
+
+  .portrait__glow {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 70%;
+    height: 40%;
+    translate: -50% 0;
+    background: radial-gradient(closest-side, rgb(255 157 187 / 0.45), transparent);
+  }
+
+  .portrait__sparkle {
+    position: absolute;
+    animation: twinkle 1.6s steps(2, jump-none) infinite;
+  }
+
+  .portrait__sparkle--a {
+    top: 22px;
+    right: 22px;
+  }
+
+  .portrait__sparkle--b {
+    top: 96px;
+    left: 20px;
+    animation-delay: 0.8s;
+  }
+
+  .portrait__char {
+    position: relative;
+    display: block;
+    animation: bob 1.2s steps(1) infinite;
+  }
+
+  /* Escalas enteras (9x / 7x) para que los pixeles queden parejos */
+  .portrait__char :global(.sprite) {
+    display: block;
+    width: 288px;
+    height: auto;
+  }
+
+  @media (max-width: 420px) {
+    .portrait__char :global(.sprite) {
+      width: 224px;
+    }
+  }
+
+  .portrait__char :global(.portrait__blink),
+  .portrait__char :global(.portrait__happy) {
+    position: absolute;
+    inset: 0;
+  }
+
+  .portrait__char :global(.portrait__blink) {
+    opacity: 0;
+    animation: blink 4.2s linear infinite;
+  }
+
+  .portrait__char :global(.portrait__happy) {
+    opacity: 0;
+  }
+
+  .is-happy .portrait__char :global(.portrait__happy) {
+    opacity: 1;
+  }
+
+  .is-happy .portrait__char :global(.portrait__blink) {
+    visibility: hidden;
+  }
+
+  .bubble {
+    position: relative;
+    margin: 0;
+    padding: 10px 16px;
+    min-width: 12ch;
+    text-align: center;
+    font-family: var(--font-title);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: #fff;
+    box-shadow:
+      0 -4px 0 0 var(--ink),
+      0 4px 0 0 var(--ink),
+      -4px 0 0 0 var(--ink),
+      4px 0 0 0 var(--ink);
+  }
+
+  .bubble::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -16px;
+    width: 8px;
+    height: 8px;
+    translate: -50% 0;
+    background: #fff;
+    box-shadow:
+      0 4px 0 0 var(--ink),
+      -4px 0 0 0 var(--ink),
+      4px 0 0 0 var(--ink),
+      0 8px 0 0 var(--ink);
+  }
+
+  .bubble.pop {
+    animation: pop 0.3s steps(3);
+  }
+
+  .portrait :global(.burst) {
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    pointer-events: none;
+    animation: burst 1s steps(10) forwards;
+  }
+
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    91.9% {
+      opacity: 0;
+    }
+    92%,
+    95.9% {
+      opacity: 1;
+    }
+    96%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes pop {
+    0% {
+      transform: scale(0.8);
+    }
+    60% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes burst {
+    from {
+      transform: translate(-50%, 0) scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: translate(calc(-50% + var(--dx)), var(--dy)) scale(0.6);
+      opacity: 0;
+    }
+  }
+</style>

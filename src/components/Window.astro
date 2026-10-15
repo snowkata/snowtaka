@@ -1,0 +1,87 @@
+---
+interface Props {
+  title: string
+  id?: string
+  class?: string
+}
+
+const { title, id, class: className } = Astro.props
+---
+
+<section class:list={['win', className]} id={id} aria-labelledby={id && `${id}-title`}>
+  <header class="win__bar">
+    <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <h2 class="win__title" id={id && `${id}-title`}>{title}</h2>
+  </header>
+  <div class="win__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .win {
+    position: relative;
+    background: var(--panel);
+    margin: var(--p);
+    box-shadow:
+      0 calc(-1 * var(--p)) 0 0 var(--line),
+      0 var(--p) 0 0 var(--line),
+      calc(-1 * var(--p)) 0 0 0 var(--line),
+      var(--p) 0 0 0 var(--line),
+      var(--p) calc(3 * var(--p)) 0 0 var(--drop),
+      calc(3 * var(--p)) var(--p) 0 0 var(--drop),
+      calc(2 * var(--p)) calc(2 * var(--p)) 0 0 var(--drop);
+  }
+
+  .win__bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--bar) 0 4px,
+      var(--bar-2) 4px 8px
+    );
+    border-bottom: var(--p) solid var(--line);
+  }
+
+  .win__dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .win__dots i {
+    width: 8px;
+    height: 8px;
+    background: var(--pink);
+  }
+
+  .win__dots i:nth-child(2) {
+    background: var(--yellow);
+  }
+
+  .win__dots i:nth-child(3) {
+    background: var(--mint);
+  }
+
+  .win__title {
+    margin: 0;
+    font-family: var(--font-title);
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: 1px;
+    color: var(--text);
+    text-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .win__body {
+    padding: 20px;
+  }
+
+  @media (max-width: 480px) {
+    .win__body {
+      padding: 16px 14px;
+    }
+  }
+</style>

@@ -1,0 +1,150 @@
+---
+import PixelSprite from './PixelSprite.astro'
+import { cloud, heart, sparkle } from '../data/sprites'
+
+// PRNG con semilla para que las estrellas salgan iguales en cada build.
+let seed = 1104
+const rand = () => {
+  seed = (seed * 16807) % 2147483647
+  return (seed - 1) / 2147483646
+}
+
+const stars = Array.from({ length: 70 }, () => ({
+  x: (rand() * 100).toFixed(2),
+  y: (rand() * 100).toFixed(2),
+  size: rand() > 0.8 ? 4 : 2,
+  delay: (rand() * 4).toFixed(2),
+  duration: (2.5 + rand() * 3).toFixed(2),
+}))
+
+const sparkles = Array.from({ length: 7 }, () => ({
+  x: (4 + rand() * 92).toFixed(2),
+  y: (4 + rand() * 88).toFixed(2),
+  delay: (rand() * 5).toFixed(2),
+}))
+
+const clouds = [
+  { y: 14, scale: 6, duration: 90, delay: -20, opacity: 0.35 },
+  { y: 46, scale: 4, duration: 120, delay: -70, opacity: 0.22 },
+  { y: 72, scale: 8, duration: 150, delay: -40, opacity: 0.18 },
+]
+
+const floaters = [
+  { x: 8, delay: 0, sprite: heart },
+  { x: 88, delay: 6, sprite: sparkle },
+  { x: 24, delay: 11, sprite: sparkle },
+  { x: 70, delay: 3, sprite: heart },
+]
+---
+
+<div class="sky" aria-hidden="true">
+  {
+    stars.map((s) => (
+      <i
+        class="star"
+        style={`left:${s.x}%;top:${s.y}%;--s:${s.size}px;animation-delay:${s.delay}s;animation-duration:${s.duration}s`}
+      />
+    ))
+  }
+  {
+    sparkles.map((s) => (
+      <span class="sparkle" style={`left:${s.x}%;top:${s.y}%;animation-delay:${s.delay}s`}>
+        <PixelSprite rows={sparkle} px={3} />
+      </span>
+    ))
+  }
+  {
+    clouds.map((c) => (
+      <span
+        class="cloud"
+        style={`top:${c.y}%;opacity:${c.opacity};animation-duration:${c.duration}s;animation-delay:${c.delay}s`}
+      >
+        <PixelSprite rows={cloud} px={c.scale} />
+      </span>
+    ))
+  }
+  {
+    floaters.map((f) => (
+      <span class="floater" style={`left:${f.x}%;animation-delay:${f.delay}s`}>
+        <PixelSprite rows={f.sprite} px={3} />
+      </span>
+    ))
+  }
+</div>
+
+<style>
+  .sky {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      var(--night-0) 0 18%,
+      var(--night-1) 18% 36%,
+      var(--night-2) 36% 54%,
+      var(--night-3) 54% 72%,
+      var(--night-4) 72% 88%,
+      var(--night-5) 88% 100%
+    );
+    transition: filter 0.6s steps(6);
+  }
+
+  .star {
+    position: absolute;
+    width: var(--s);
+    height: var(--s);
+    background: #fff;
+    animation: twinkle 3s steps(2, jump-none) infinite;
+  }
+
+  .sparkle {
+    position: absolute;
+    animation: twinkle 4s steps(3, jump-none) infinite;
+  }
+
+  .cloud {
+    position: absolute;
+    left: 0;
+    animation: drift linear infinite;
+  }
+
+  .floater {
+    position: absolute;
+    bottom: -40px;
+    opacity: 0.7;
+    animation: rise 18s steps(90) infinite;
+  }
+
+  .sprite {
+    display: block;
+  }
+
+  @keyframes drift {
+    from {
+      transform: translateX(-200px);
+    }
+    to {
+      transform: translateX(100vw);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100vh - 80px));
+    }
+  }
+
+  :global(.supernova) .sky {
+    filter: hue-rotate(160deg) saturate(1.6) brightness(1.15);
+  }
+
+  :global(.supernova) .star,
+  :global(.supernova) .sparkle {
+    animation-duration: 0.4s !important;
+  }
+</style>

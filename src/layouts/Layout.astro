@@ -1,0 +1,36 @@
+---
+import '@fontsource/press-start-2p/400.css'
+import '../styles/global.css'
+import galmuri14 from 'galmuri/dist/Galmuri14.woff2?url'
+import Sky from '../components/Sky.astro'
+
+interface Props {
+  title: string
+  description: string
+}
+
+const { title, description } = Astro.props
+
+const fontFace = `@font-face{font-family:'Galmuri14';font-weight:400;font-display:swap;src:url('${galmuri14}') format('woff2')}`
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0720" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href={galmuri14} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={fontFace} />
+  </head>
+  <body>
+    <Sky />
+    <slot />
+  </body>
+</html>

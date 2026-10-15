@@ -1,0 +1,15 @@
+# dependencias y builds
+node_modules/
+dist/
+.astro/
+.vercel/
+
+# secretos / variables de entorno
+.env
+.env.*
+
+# logs y basura del sistema
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
