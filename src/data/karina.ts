@@ -17,7 +17,7 @@ export const site = {
   photosTitle: 'MEMORY CARD ♡',
   photosTip: 'Memories',
   emptySlot: 'VACÍO',
-  footer: 'hecho con ♥ por un snowkata',
+  footer: 'hecho con ♥ por snowkata',
   legal: 'Fan page · sin relación con SM Entertainment',
 }
 
